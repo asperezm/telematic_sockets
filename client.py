@@ -4,7 +4,6 @@ import constant
 HEADER = 1024
 PORT = 5050
 FORMAT = 'utf-8'
-DISCONNECT_MESSAGE = "!DISCONNECT"
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER,PORT)
 
