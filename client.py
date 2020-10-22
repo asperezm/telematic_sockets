@@ -1,4 +1,5 @@
 import socket
+import constant
 
 HEADER = 1024
 PORT = 5050
@@ -9,18 +10,25 @@ ADDR = (SERVER,PORT)
 
 client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client.connect(ADDR)
-
-def send(msg):
-    message = msg.encode(FORMAT)
-    msg_length = len(message)
-    send_length = str(msg_length).encode(FORMAT)
-    send_length += b' ' * (HEADER - len(send_length))
-    client.send(send_length)
-    client.send(message)
-    print(client.recv(2048).decode(FORMAT))
     
-send("Hello world!")
-send("Hello!")
-input()
-send("Hello anyone!")
-send(DISCONNECT_MESSAGE)
+def start():
+    print("Connected to the server, 'HELP' to see the available commands")
+    while True:
+        command = input()
+        if command == "":
+            print("Invalid command")
+        elif command == "HELP":
+            print('ALL, CBUCKET, DBUCKET, LBUCKET, LBUCKET, LFILE, UPFILE, DWFILE, DWFILE, DFILE, EXIT')
+        elif command == "EXIT":
+            client.send(bytes( command, FORMAT))
+            break
+        else:
+            client.send(bytes( command, FORMAT))
+        print(client.recv(HEADER).decode(FORMAT))
+    print(client.recv(HEADER).decode(FORMAT))
+            
+start()
+        
+            
+        
+        
