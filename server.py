@@ -10,10 +10,9 @@ PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER,PORT)
 FORMAT = 'utf-8'
-DISCONNECT_MESSAGE = "!DISCONNECT"
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
+
 
 
 def handle_client(conn,addr):
@@ -21,8 +20,8 @@ def handle_client(conn,addr):
     connected = True
     while connected:
         msg_length = conn.recv(HEADER).decode(FORMAT)
-        recv = msg_length.split()
-        command = recv[0]
+        comm = msg_length.split()
+        command = comm[0]
         
         print(command)
         print(f'Received from { addr }')
@@ -37,7 +36,7 @@ def handle_client(conn,addr):
             conn.send(bytes(data_string, FORMAT))
         
         elif command == constant.CREATE_BUCKET:
-            new_bucket = constant.PATH + f'/{ recv[1] }'
+            new_bucket = constant.PATH + f'/{ comm[1] }'
             try:
                 os.mkdir(new_bucket)
             except OSError:
@@ -46,7 +45,7 @@ def handle_client(conn,addr):
                 conn.send(bytes('[100] BUCKET CREATED', FORMAT))
                 
         elif command == constant.DELETE_BUCKET:
-            bucket = constant.PATH + f'/{ recv[1] }'
+            bucket = constant.PATH + f'/{ comm[1] }'
             try:
                 os.rmdir(bucket)
             except OSError:
@@ -76,7 +75,9 @@ def handle_client(conn,addr):
     
 
 def start():
-    server.listen()
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    server.bind(ADDR)
+    server.listen(10)
     print(f"[LISTENING] Server is listening on {SERVER}")
     while True:
         conn, addr = server.accept()
