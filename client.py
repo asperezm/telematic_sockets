@@ -1,6 +1,6 @@
 import socket
 
-HEADER = 64
+HEADER = 1024
 PORT = 5050
 FORMAT = 'utf-8'
 DISCONNECT_MESSAGE = "!DISCONNECT"

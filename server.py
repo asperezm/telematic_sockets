@@ -1,8 +1,11 @@
 import socket
 import threading
+import os
+import constant
+import json
 
 
-HEADER = 64
+HEADER = 1024
 PORT = 5050
 SERVER = socket.gethostbyname(socket.gethostname())
 ADDR = (SERVER,PORT)
@@ -18,15 +21,56 @@ def handle_client(conn,addr):
     connected = True
     while connected:
         msg_length = conn.recv(HEADER).decode(FORMAT)
-        if msg_length:
-            msg_length = int(msg_length)
-            msg = conn.recv(msg_length).decode(FORMAT)
-            if msg == DISCONNECT_MESSAGE:
-                connected = False
+        recv = msg_length.split()
+        command = recv[0]
+        
+        print(command)
+        print(f'Received from { addr }')
+        
+        if command == constant.LIST_ALL:
+            data = {}
+            for r, f in os.walk(constant.PATH):
+                if r != constant.PATH:
+                    data[os.path.basename(r)] = f
+            data_string = json.dumps(data)
+            conn.send(bytes('[500] LIST OBTAINED', FORMAT))
+            conn.send(bytes(data_string, FORMAT))
+        
+        elif command == constant.CREATE_BUCKET:
+            new_bucket = constant.PATH + f'/{ recv[1] }'
+            try:
+                os.mkdir(new_bucket)
+            except OSError:
+                conn.send(bytes('[307] BUCKET ALREADY EXISTS', FORMAT))
+            else:
+                conn.send(bytes('[100] BUCKET CREATED', FORMAT))
                 
-            print(f"[{addr}] {msg}")
-            conn.send("Msg received".encode(FORMAT))
-    
+        elif command == constant.DELETE_BUCKET:
+            bucket = constant.PATH + f'/{ recv[1] }'
+            try:
+                os.rmdir(bucket)
+            except OSError:
+                conn.send(bytes('[304] BUCKET NOT FOUND', FORMAT))
+            else:
+                conn.send(bytes('[200] BUCKET DELETED', FORMAT))
+            
+        elif command == constant.LIST_BUCKETS:
+            pass
+        elif command == constant.LIST_FILES:
+            pass
+        elif command == constant.UPLOAD_FILE:
+            pass
+        elif command == constant.DOWNLOAD_FILE:
+            pass
+        elif command == constant.DELETE_FILE:
+            pass
+        elif command == constant.DISCONNECT_COMMAND:
+            print(f'[CLIENT DISCONNECTED] { addr } disconnected')
+            conn.send(bytes('[600] DISCONNECTED', FORMAT))
+            connected = False
+        else:
+            conn.send(bytes('[300] UNKNOWN COMMAND', FORMAT))
+
     conn.close()
         
     
