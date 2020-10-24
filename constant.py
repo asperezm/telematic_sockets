@@ -9,7 +9,9 @@ LIST_FILES = 'LFILE'            # List all files of an existing bucket
 UPLOAD_FILE = 'UPFILE'          # Upload a file to the server             
 DOWNLOAD_FILE = 'DWFILE'        # Download a file from the server          
 DELETE_FILE = 'DFILE'          # Delete a file from an existing bucket   
-DISCONNECT_COMMAND = 'EXIT'     # Disconnects from server                  
+DISCONNECT_COMMAND = 'EXIT'     # Disconnects from server        
+TRAVEL_PATH = 'D'
+BACK = 'BK'
 
 COMMAND_MESSAGE = {
     100: 'BUCKET CREATED',
@@ -25,7 +27,8 @@ COMMAND_MESSAGE = {
     306: 'FILE ALREADY EXISTS',
     307: 'BUCKET ALREADY EXISTS',
     400: 'FILE UPLOADED',
-    401: 'FILE DOWNLOADED',
+    401: 'FAILED TO UPLOAD',
+    402: 'FILE DOWNLOADED',
     500: 'LIST OBTAINED',
     600: 'DISCONNECTED',
 }
