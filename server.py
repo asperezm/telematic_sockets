@@ -29,7 +29,6 @@ def handle_client(conn, addr):
             strfiles = ""
             for x in os.listdir(constant.PATH):
                 strfiles += x+"\n"
-            conn.send(bytes('[500] LIST OBTAINED', FORMAT))
             conn.send(strfiles[:-1].encode(FORMAT))
 
         elif command == constant.CREATE_BUCKET:
@@ -56,7 +55,6 @@ def handle_client(conn, addr):
             for buck in bucket1:
                 if os.path.isdir(os.path.join(buck)):
                     bucketname += buck+"\n"
-            conn.send(bytes('[500] LIST OBTAINED', FORMAT))
             conn.send(bucketname[:-1].encode(FORMAT))
 
         elif command == constant.LIST_FILES:
@@ -65,27 +63,55 @@ def handle_client(conn, addr):
             for file in files:
                 if os.path.isfile(os.path.join(file)):
                     filesname += file+"\n"
-            conn.send(bytes('[500] LIST OBTAINED', FORMAT))
             conn.send(filesname[:-1].encode(FORMAT))
-        
+
         elif command == constant.UPLOAD_FILE:
             filename = comm[1]
             try:
-               shutil.copy(filename,constant.PATH)
+               shutil.copy(filename, constant.PATH)
                conn.send("[400] FILE UPLOADED".encode(FORMAT))
             except:
                 conn.send("[401] FAILED TO UPLOAD".encode(FORMAT))
-                
+
         elif command == constant.DOWNLOAD_FILE:
-            pass
+            filename = comm[1]
+            try:
+                shutil.copy(filename,comm[2])
+                conn.send("[402] FILE DOWNLOADED".encode(FORMAT))
+            except:
+                conn.send("[403] FAILED TO DOWNLOAD".encode(FORMAT))
         elif command == constant.DELETE_FILE:
-            pass
+            file = constant.PATH + f'/{ comm[1] }'
+            try:
+                os.remove(file)
+            except OSError:
+                conn.send(bytes(f'[305] FILE NOT FOUND', FORMAT))
+            else:
+                conn.send(bytes(f'[201] FILE DELETED', FORMAT))
+        elif command == constant.TRAVEL_PATH:
+            try:
+                os.chdir(constant.PATH + comm[1])
+                constant.PATH += comm[1]
+                conn.send(f"DIRECTORY CHANGED".encode(FORMAT))
+            except OSError:
+                conn.send(f"Can't change the Current Working Directory".encode(FORMAT))
+        elif command == constant.BACK:
+            try:
+                os.chdir("../")
+                constant.PATH = os.getcwd() + "/"
+                conn.send(f"You went back from directory".encode(FORMAT))
+            except OSError:
+                conn.send(f"Can't go back from directory".encode(FORMAT)) 
+        elif command == constant.HELP:
+            conn.send(f'ALL, CBUCKET, DBUCKET, LBUCKET, LBUCKET, LFILE, UPFILE, DWFILE, DWFILE, DFILE, EXIT, CD, BK'.encode(FORMAT))
         elif command == constant.DISCONNECT_COMMAND:
             print(f'[CLIENT DISCONNECTED] { addr } disconnected')
-            conn.send(bytes('[600] DISCONNECTED', FORMAT))
+            conn.send(bytes(f'[600] DISCONNECTED', FORMAT))
             connected = False
+        elif command == "a":
+            conn.send(constant.PATH.encode(FORMAT))
         else:
-            conn.send(bytes('[300] UNKNOWN COMMAND', FORMAT))
+            conn.send(bytes(f'[300] UNKNOWN COMMAND', FORMAT))
 
     conn.close()
 
@@ -100,6 +126,7 @@ def start():
         thread = threading.Thread(target=handle_client, args=(conn, addr))
         thread.start()
         print(f"[ACTIVE CONNECTIONS] {threading.activeCount() - 1}")
+        constant.PATH = 'C:/Users/Santiago/Desktop/proyecto_Telematica/server_files/'
 
 
 print(f"[STARTING] server is starting...")

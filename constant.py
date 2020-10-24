@@ -1,5 +1,5 @@
 PORT = 5050
-PATH = 'C:/Users/Santiago/Desktop/proyecto_Telematica/server_files'
+PATH = 'C:/Users/Santiago/Desktop/proyecto_Telematica/server_files/'
 
 LIST_ALL = 'ALL'                # Lists everything                        
 CREATE_BUCKET = 'CBUCKET'       # Create a new bucket                     
@@ -10,8 +10,9 @@ UPLOAD_FILE = 'UPFILE'          # Upload a file to the server
 DOWNLOAD_FILE = 'DWFILE'        # Download a file from the server          
 DELETE_FILE = 'DFILE'          # Delete a file from an existing bucket   
 DISCONNECT_COMMAND = 'EXIT'     # Disconnects from server        
-TRAVEL_PATH = 'D'
+TRAVEL_PATH = 'CD'
 BACK = 'BK'
+HELP = 'HELP'
 
 COMMAND_MESSAGE = {
     100: 'BUCKET CREATED',
@@ -29,6 +30,7 @@ COMMAND_MESSAGE = {
     400: 'FILE UPLOADED',
     401: 'FAILED TO UPLOAD',
     402: 'FILE DOWNLOADED',
+    403: 'FAILED TO DOWNLOAD',
     500: 'LIST OBTAINED',
     600: 'DISCONNECTED',
 }
