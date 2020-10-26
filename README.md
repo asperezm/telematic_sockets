@@ -24,5 +24,5 @@ You're all set !
 Boot up a terminal and in the project directory use python client.py
 
 ## Authors✒️
-- Andrew
-- Andrés
+- Andrew Perez Martinez
+- Andrés Ramirez
