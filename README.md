@@ -25,4 +25,4 @@ Boot up a terminal and in the project directory use python client.py
 
 ## Authors✒️
 - Andrew Perez Martinez
-- Andrés Ramirez
+- Duvan Ramirez
